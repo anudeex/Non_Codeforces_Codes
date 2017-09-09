@@ -14,7 +14,7 @@ typedef vector <vector<ll> > matrix;
 const ll mod = 1e9 + 7;
 const ll K = 2;
 
-matrix mult(matrix A, matrix B) {
+matrix mult(matrix& A, matrix& B) {
 	ll i, j, k;
 	matrix C(K, vector <ll> (K));
 	for(i = 0; i < K; i++) {
@@ -27,12 +27,13 @@ matrix mult(matrix A, matrix B) {
 	return C;
 } 
 
-matrix pow(matrix A, ll n) {
+matrix pow(matrix& A, ll n) {
 	if(n == 1) {
 		return A;
 	}
 	if(n % 2) {
-		return mult(A, pow(A, n - 1));
+		matrix B = pow(A, n - 1);
+		return mult(A, B);
 	}
 	matrix X = pow(A, n / 2);
 	return mult(X, X);
