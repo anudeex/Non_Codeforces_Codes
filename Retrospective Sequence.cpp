@@ -5,8 +5,6 @@ Algorithm: Matrix Exponentiation.
 Created: 2017-09-11 00:38 IST 
 */
 
-//Classic Question and Tough Implementation.
-
 #include <bits/stdc++.h>
 
 using namespace std;
@@ -103,4 +101,6 @@ int main() {
 	printf("%lld\n", solve(m));
 	return 0;
 }
+
+//Classic Question and Tough Implementation.
 
