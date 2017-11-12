@@ -37,8 +37,6 @@ int solve(int x1, int y1, int x2, int y2) {
 }
 
 int main() {
-	clock_t T;
-    T = clock();
 	freopen("C-large-practice.in", "r", stdin);
 	freopen("outC.txt", "w", stdout);
 	int t;
@@ -55,7 +53,4 @@ int main() {
 		int ans = solve(0, 0, n - 1, m - 1);
 		printf("Case #%d: %d\n", p, ans);
 	}
-	T = clock() - T;
-    double time_taken = ((double)T)/CLOCKS_PER_SEC;
-    printf("Time Taken by Quick Sort(Lomuto Partition) is %lf\n", time_taken);
 }
