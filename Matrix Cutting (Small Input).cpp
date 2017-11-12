@@ -32,7 +32,6 @@ int main() {
 				for(l = i; l <= j; l++) {
 					mini = min(mini, arr[0][l]);
 				}
-				//cout << "I and J are " << i << " " << j << " Mini is " << mini << "\n";
 				int temp = 0;
 				for(l = i; l < j; l++) {
 					temp = max(temp, dp[i][l] + dp[l + 1][j]);
