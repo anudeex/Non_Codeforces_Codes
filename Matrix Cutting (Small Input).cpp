@@ -1,10 +1,3 @@
-/*
-Question: Matrix Cutting
-Link: https://code.google.com/codejam/contest/dashboard?c=3254486#s=p2
-Algorithm: Small Test File (1D DP)
-Created: 2017-11-12 23:06 IST 
-*/
-
 #include <bits/stdc++.h>
 
 using namespace std;
