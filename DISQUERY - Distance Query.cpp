@@ -1,101 +1,113 @@
 /*
+By: anudeex_cr7 (anudeexshetty97@gmail.com)
 Question: DISQUERY - Distance Query
 Link: http://www.spoj.com/problems/DISQUERY/
-Algorithm: LCA and Implementation
-Created: 2017-08-10 22:16 IST 
+Algorithm: LCA + Implementation.
+Created: 2018-01-24 02:09 IST 
 */
+
+/*
+Ref: https://stackoverflow.com/questions/36083410/how-to-solve-spoj-disquery
+*/
+
 #include <bits/stdc++.h>
 
-#define max_n (int)100005
-#define max_log (int)20
+using namespace std;
+
+typedef long long ll;
 
 #define pb push_back
 #define f first
 #define s second
 
-using namespace std;
+const ll maxN = 1e5 + 5;
+const ll maxlog = 20;
 
-vector<pair<int,int>> graph[max_n];
+vector <pair<ll, ll>> graph[maxN];
 
-int par[max_n][max_log],par_min[max_n][max_log],par_max[max_n][max_log],h[max_n];
+ll par[maxN][maxlog], h[maxN], mini[maxN][maxlog], maxi[maxN][maxlog];
 
-void dfs(int curr,int prev,int edge){
-	par[curr][0]=prev;
-	if(prev!=-1){
-		h[curr]=h[prev]+1;
-		par_min[curr][0]=par_max[curr][0]=edge;
+void dfs(ll curr, ll prev, ll edge) {
+	ll i, j, k;
+	par[curr][0] = prev;
+	if(prev != -1) {
+		h[curr] = h[prev] + 1;
+		mini[curr][0] = maxi[curr][0] = edge;
 	}
-	int i,j,k;
-	for(i=1;i<max_log;i++){
-		if(par[curr][i-1]!=-1){
-			par[curr][i]=par[par[curr][i-1]][i-1];
-			par_min[curr][i]=min(par_min[par[curr][i-1]][i-1],par_min[curr][i-1]);
-			par_max[curr][i]=max(par_max[par[curr][i-1]][i-1],par_max[curr][i-1]);
+	for(i = 1; i < maxlog; i++) {
+		if(par[curr][i - 1] != -1) {
+			par[curr][i] = par[par[curr][i - 1]][i - 1];
+			maxi[curr][i] = max(maxi[curr][i - 1], maxi[par[curr][i - 1]][i - 1]);
+			mini[curr][i] = min(mini[curr][i - 1], mini[par[curr][i - 1]][i - 1]);
+		}
+		else {
+			break;
 		}
 	}
-	for(auto it: graph[curr]){
-		if(it.f!=prev)
-			dfs(it.f,curr,it.s);
+	for(auto it : graph[curr]) {
+		if(it.f != prev) {
+			dfs(it.f, curr, it.s);
+		}
 	}
 }
 
-pair<int,int> lca(int u,int v){
-	if(h[u]<h[v]){
-		swap(v,u);
+pair <ll, ll> lca(ll u, ll v) {
+	ll i, j, k;
+	ll ansMini = 1e10, ansMaxi = -1;
+	if(h[u] > h[v]) {
+		swap(u, v);
 	}
-	pair<int,int> ans={1000000,-1};
-	int i,j,k;
-	for(i=max_log-1;i>=0;i--){
-		if(par[u][i]!=-1 and h[par[u][i]]>=h[v]){
-			ans.f=min(ans.f,par_min[u][i]);
-			ans.s=max(ans.s,par_max[u][i]);
-			u=par[u][i];
-		}
+	for(i = maxlog - 1; i >= 0; i--) {
+		if(par[v][i] != -1 and h[par[v][i]] >= h[u]) {
+			ansMini = min(ansMini, mini[v][i]);
+			ansMaxi = max(ansMaxi, maxi[v][i]);
+			v = par[v][i];
+		} 
 	}
-	if(u==v){
-		return ans;
+	if(v == u) {
+		return {ansMini, ansMaxi};
 	}
-	for(i=max_log-1;i>=0;i--){
-		if(par[u][i]!=par[v][i]){
-			ans.f=min(ans.f,par_min[u][i]);
-			ans.s=max(ans.s,par_max[u][i]);
-			ans.f=min(ans.f,par_min[v][i]);
-			ans.s=max(ans.s,par_max[v][i]);
-			u=par[u][i];
-			v=par[v][i];
-		}
+	for(i = maxlog - 1; i >= 0; i--) {
+		if(par[v][i] != par[u][i]) {
+			ansMini = min(ansMini, mini[v][i]);
+			ansMaxi = max(ansMaxi, maxi[v][i]);
+			ansMini = min(ansMini, mini[u][i]);
+			ansMaxi = max(ansMaxi, maxi[u][i]);
+			v = par[v][i];
+			u = par[u][i];
+		} 
 	}
-	ans.f=min(ans.f,par_min[u][0]);
-	ans.s=max(ans.s,par_max[u][0]);
-	ans.f=min(ans.f,par_min[v][0]);
-	ans.s=max(ans.s,par_max[v][0]);
-	return ans;
-}
+	ansMini = min(ansMini, mini[v][0]);
+	ansMaxi = max(ansMaxi, maxi[v][0]);
+	ansMini = min(ansMini, mini[u][0]);
+	ansMaxi = max(ansMaxi, maxi[u][0]);
+	return {ansMini, ansMaxi};
+} 
 
-int main(){
-	int n,i,j,k;
-	scanf("%d",&n);
-	for(i=1;i<n;i++){
-		int a,b,c;
-		scanf("%d%d%d",&a,&b,&c);
-		graph[a].pb({b,c});
-		graph[b].pb({a,c});
+int main() {
+	ll n, i, j, k;
+	scanf("%lld", &n);
+	for(i = 1; i < n; i++) {
+		ll u, v, w;
+		scanf("%lld %lld %lld", &u, &v, &w);
+		graph[u].pb({v, w});
+		graph[v].pb({u, w});
 	}
-	for(i=1;i<=n;i++){
-		for(j=0;j<max_log;j++){
-			par[i][j]=-1;
-			par_min[i][j]=1000000;
-			par_max[i][j]=-1;
+	for(i = 1; i <= n; i++) {
+		for(j = 0; j < maxlog; j++) {
+			par[i][j] = -1;
+			maxi[i][j] = -1;
+			mini[i][j] = 1e10;
 		}
 	}
-	dfs(1,-1,-1);
-	int q;
-	scanf("%d",&q);
-	while(q--){
-		int a,b;
-		scanf("%d%d",&a,&b);
-		pair<int,int> ans=lca(a,b);
-		printf("%d %d\n",ans.f,ans.s);
+	dfs(1, -1, 0);
+	ll q;
+	scanf("%lld", &q);
+	while(q--) {
+		ll u, v;
+		scanf("%lld %lld", &u, &v);
+		pair <ll, ll> ans = lca(u, v);
+		printf("%lld %lld\n", ans.f, ans.s);
 	}
 	return 0;
 }
